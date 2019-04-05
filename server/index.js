@@ -16,6 +16,8 @@ massive(CONNECTION_STRING).then((db) => {
     console.log(db.listTables())
 })
 
+app.get('/api/houses', controller.getAllHouses)
+
 
 
 

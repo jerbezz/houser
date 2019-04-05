@@ -5,7 +5,12 @@ class House extends Component {
   render() {
     return (
       <div>
-          House
+          <p><strong>Property Name: </strong>{this.props.house.house_name}</p>
+          <p><strong>Address: </strong>{this.props.house.address}</p>
+          <p><strong>City: </strong>{this.props.house.city}</p>
+          <p><strong>State: </strong>{this.props.house.state}</p>
+          <p><strong>Zip: </strong>{this.props.house.zip}</p>
+          <button>X</button>
       </div>
     );
   }

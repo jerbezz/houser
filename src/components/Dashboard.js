@@ -13,8 +13,13 @@ class Dashboard extends Component {
     }
 
     componentDidMount(){
+       this.getHouses() 
+    }
+
+    getHouses = () => {
         axios.get('/api/houses')
         .then(res => {
+            console.log(res.data)
             this.setState({
                 houses: res.data
             })
@@ -28,7 +33,10 @@ class Dashboard extends Component {
       <div>
           Dashboard
           <Link to='/wizard'><button>Add New Property</button></Link>
-          <House/>
+          {this.state.houses.map((item, i) => {
+                return <House
+                key={i} house={item} id={item.id}/>
+          })}
       </div>
     );
   }
