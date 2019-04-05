@@ -10,13 +10,14 @@ class Dashboard extends Component {
         this.state = {
             houses: []
         }
+        this.getHouses = this.getHouses.bind(this)
     }
 
     componentDidMount(){
        this.getHouses() 
     }
 
-    getHouses = () => {
+    getHouses() {
         axios.get('/api/houses')
         .then(res => {
             console.log(res.data)
@@ -24,6 +25,15 @@ class Dashboard extends Component {
                 houses: res.data
             })
         }).catch(err => console.log('get all houses err', err))
+    }
+
+    deleteHouse = id => {
+        
+        axios.delete(`/api/houses/${id}`).then(res => {
+          this.getHouses()
+        }).catch(err => {
+            console.log('delete error', err)
+        })
     }
 
 
@@ -35,7 +45,8 @@ class Dashboard extends Component {
           <Link to='/wizard'><button>Add New Property</button></Link>
           {this.state.houses.map((item, i) => {
                 return <House
-                key={i} house={item} id={item.id}/>
+                key={i} house={item} id={item.id}
+                deleteHouse={this.deleteHouse}/>
           })}
       </div>
     );
