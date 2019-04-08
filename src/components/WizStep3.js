@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom'
 import axios from 'axios'
+import store, { UPDATE_MORTGAGE, UPDATE_RENT } from '../store'
 
 class WizStep3 extends Component {
     constructor(){
         super()
+        const reduxState = store.getState()
         this.state = {
-            house_name: '',
-            address: '',
-            city: '',
-            state: '',
-            zip: ''
+            mortgage: reduxState.mortgage,
+            rent: reduxState.rent
         }
+    }
+
+    componentDidMount(){
+      store.subscribe(() => {
+        const reduxState = store.getState()
+        this.setState({
+            mortgage: reduxState.mortgage,
+            rent: reduxState.rent
+        })
+      })
     }
 
     handleChange = e => {
@@ -19,6 +28,18 @@ class WizStep3 extends Component {
         this.setState({
             [name]: value
         })
+    }
+
+    saveChanges() {
+      // Send data to Redux state
+      store.dispatch({
+        type: UPDATE_MORTGAGE,
+        payload: this.state.mortgage
+      })
+      store.dispatch({
+        type: UPDATE_RENT,
+        payload: this.state.rent
+      })
     }
 
     createHouse = () => {
@@ -32,12 +53,12 @@ class WizStep3 extends Component {
             state: '',
             zip: ''
         })
-      }).then((res)=> {
-
-      }).catch((err)=>{ console.log(err)
-        return err})
+     this.props.history.push('/')
+      })
+      .catch((err)=> console.log(err))
       
     }
+
 
   render() {
     //   console.log(this.state)
@@ -47,10 +68,11 @@ class WizStep3 extends Component {
             Add New Listing
              <Link to='/'><button>Cancel</button></Link>
           </div>
-          <input placeholder='Monthly Mortgage Amount' name='mortgage' value={this.state.house_name} onChange={this.handleChange}></input>
-          <input placeholder='Desired Monthly Rent' name='rent' value={this.state.address} onChange={this.handleChange}></input>
+          <input placeholder='Monthly Mortgage Amount' name='mortgage' value={this.state.mortgage} onChange={this.handleChange}></input>
+          <input placeholder='Desired Monthly Rent' name='rent' value={this.state.rent} onChange={this.handleChange}></input>
           
-          <Link to='/'><button onClick={this.createHouse}>Complete</button></Link>
+          <Link to='/wizard/steptwo'><button onClick={this.saveChanges()} >Complete</button></Link>
+          <Link to='/'><button onClick={this.saveChanges()} onClick={this.createHouse}>Complete</button></Link>
           
       </div>
     );

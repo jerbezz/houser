@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom'
-import axios from 'axios'
+import store, { UPDATE_HOUSE_IMG } from '../store'
 
 class WizStep2 extends Component {
     constructor(){
         super()
+        const reduxState = store.getState()
         this.state = {
-            house_name: '',
-            address: '',
-            city: '',
-            state: '',
-            zip: ''
+            house_img: reduxState.house_img
         }
+    }
+
+    componentDidMount(){
+      store.subscribe(() => {
+        const reduxState = store.getState()
+        this.setState({
+            house_img: reduxState.house_img
+        })
+      })
     }
 
     handleChange = e => {
@@ -21,23 +27,15 @@ class WizStep2 extends Component {
         })
     }
 
-    createHouse = () => {
-        const {house_name, address, city, state, zip} = this.state
-         axios.post('/api/houses', {house_name, address, city, state, zip})
-         .then(res=> {
-        this.setState({
-            house_name: '',
-            address: '',
-            city: '',
-            state: '',
-            zip: ''
-        })
-      }).then((res)=> {
-
-      }).catch((err)=>{ console.log(err)
-        return err})
-      
+    saveChanges() {
+      // Send data to Redux state
+      store.dispatch({
+        type: UPDATE_HOUSE_IMG,
+        payload: this.state.house_name
+      })
     }
+
+    
 
   render() {
     //   console.log(this.state)
@@ -47,8 +45,9 @@ class WizStep2 extends Component {
             Add New Listing
              <Link to='/'><button>Cancel</button></Link>
           </div>
-          <input placeholder='House Image URL' name='house_img' onChange={this.handleChange}></input>
-          <Link to='/wizard/stepthree'><button>Next Step</button></Link>
+          <input placeholder='House Image URL' name='house_img' value={this.state.house_img} onChange={this.handleChange}></input>
+          <Link to='/wizard'><button onClick={() => this.saveChanges()}>Previous Step</button></Link>
+          <Link to='/wizard/stepthree'><button onClick={() => this.saveChanges()}>Next Step</button></Link>
           
       </div>
     );
